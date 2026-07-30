@@ -1,0 +1,187 @@
+{
+    "QueHuong": {
+        "title": "Quê hương",
+        "path": "QueHuong",
+        "description": "Bác Hồ sinh ngày 19 tháng 5 năm 1890 tại quê ngoại là làng Hoàng Trù (thường gọi là làng Chùa), xã Chung Cự, tổng Lâm Thịnh, nay thuộc xã Kim Liên, huyện Nam Đàn, tỉnh Nghệ An. Quê nội của Người nằm cách đó không xa, tại làng Kim Liên (làng Sen).",
+        "blocks": [
+            {
+                "path": "NhaBac",
+                "title": "Về quê hương, gia đình và tuổi thơ Bác Hồ",
+                "description": "Nghệ An vốn là vùng đất “địa linh nhân kiệt”, nơi sinh ra nhiều bậc sĩ phu yêu nước và các lãnh tụ phong trào Cần Vương. Ngay từ thưở ấu thơ, Nguyễn Sinh Cung đã được tắm mình trong cái nôi văn hóa xứ Nghệ, thấm đẫm những câu hò, điệu ví dặm của mẹ và chứng kiến cảnh đất nước lầm than, từ đó sớm hình thành lòng yêu nước và sự đồng cảm sâu sắc với đồng bào.",
+                "additionInfo": "Gia đình Bác là một gia đình nho học yêu nước. Những phẩm chất cao quý của những người thân trong gia đình đã ảnh hưởng trực tiếp đến nhân cách và lý tưởng của Người. \n Ngoài ra, gia đình bác còn có Em trai Nguyễn Sinh Xin: Sinh ra vào đầu năm 1901 trong cảnh nghèo túng tại Huế ngay trước khi bà Hoàng Thị Loan qua đời. Bác Hồ lúc đó 11 tuổi đã phải ẵm em đi xin sữa khắp xóm. Do ốm yếu và thiếu hơi ấm của mẹ, người em út qua đời khi mới vài tháng tuổi.",
+                "images": [
+                    "image1.jpg",
+                    "image2.jpg",
+                    "image3.jpg",
+                    "image4.jpg",
+                    "image5.jpg",
+                    "image6.jpg",
+                    "image7.jpg",
+                    "image8.jpg"
+                ]
+            },
+            {
+                "path": "ThanPhu",
+                "title": "Thân phụ: Cụ Phó bảng Nguyễn Sinh Sắc (1862 - 1929)",
+                "description": "Cụ Nguyễn Sinh Sắc mồ côi cả cha lẫn mẹ từ nhỏ, xuất thân trong hoàn cảnh nghèo khó nhưng nhờ tư chất thông minh và ý chí ham học, cụ đã thi đỗ Phó bảng năm 1901. Mặc dù đỗ đạt cao, cụ không màng danh lợi, từng từ chối ra làm quan với câu nói nổi tiếng: “Quan trường thị nô lệ trung chi nô lệ, hựu nô lệ”. (Quan trường là nô lệ trong những kẻ nô lệ, lại càng nô lệ). Sau này, khi buộc phải nhậm chức Tri huyện Bình Khê, cụ luôn đứng về phía người nghèo, xử án công minh và thả nhiều người vô tội. Bị thực dân Pháp và triều đình phong kiến cách chức, cụ đi vào phương Nam, sống bằng nghề bốc thuốc chữa bệnh cho dân nghèo và bí mật liên lạc với các nhà yêu nước. Tấm gương về một nhà Nho thanh cao, yêu nước thương dân của người cha đã in dấu ấn đậm nét trong tâm hồn Bác.",
+                "additionInfo": "",
+                "images": [
+                    "image9.jpg",
+                    "image10.jpg",
+                    "image11.jpg",
+                    "image12.jpg"
+                ]
+            },
+            {
+                "path": "ThanMau",
+                "title": "Thân mẫu: Bà Hoàng Thị Loan (1868 - 1901)",
+                "description": "Bà Hoàng Thị Loan là hình mẫu tiêu biểu của người phụ nữ Việt Nam truyền thống: tần tảo, hi sinh, và giàu lòng nhân ái. Khi chồng lên kinh đô Huế ôn thi, bà đã gánh gồng hai con nhỏ trèo đèo lội suối vào Huế, đêm ngày dệt vải để nuôi chồng ăn học. Chế độ lao động kiệt sức cùng hoàn cảnh sống kham khổ đã khiến bà qua đời ở tuổi 33, để lại cậu bé Nguyễn Sinh Cung mới 11 tuổi cùng người em út vừa lọt lòng. Sự hy sinh vĩ đại của mẹ là nỗi đau lớn nhưng cũng là động lực để Bác hun đúc lòng nhân ái, bao dung với mọi kiếp người đau khổ.",
+                "additionInfo": "",
+                "images": [
+                    "image13.jpg",
+                    "image14.jpg"
+                ]
+            },
+            {
+                "path": "ChiGai",
+                "title": "Chị gái Nguyễn Thị Thanh (Bạch Liên)",
+                "description": "Bà là một người phụ nữ can trường, tích cực tham gia các phong trào chống Pháp, từng ăn trộm súng của Pháp để tiếp tế cho nghĩa quân. Bà bị thực dân Pháp bắt giam, tra tấn dã man và đày đi nhiều nhà tù.",
+                "additionInfo": "",
+                "images": [
+                    "image15.jpg",
+                    "image16.jpg"
+                ]
+            },
+            {
+                "path": "AnhTrai",
+                "title": "Anh trai Nguyễn Sinh Khiêm (Nguyễn Tất Đạt)",
+                "description": "Ông cũng là một người có tư tưởng chống Pháp mạnh mẽ, tham gia nhiều hoạt động yêu nước và từng bị thực dân Pháp giam giữ, quản thúc trong nhiều năm.",
+                "additionInfo": "",
+                "images": [
+                    "image17.jpg",
+                    "image18.jpg"
+                ]
+            }
+        ]
+    },
+    "HanhTrinh": {
+        "title": "Hành trình Sự nghiệp Cách mạng",
+        "path": "HanhTrinh",
+        "description": "Từ lòng yêu nước và nỗi đau mất nước, người thanh niên Nguyễn Tất Thành không chọn con đường cứu nước của các bậc tiền bối như Phan Bội Châu hay Phan Châu Trinh, mà quyết tâm sang phương Tây để tìm hiểu nguyên lý của sự tự do",
+        "blocks": [
+            {
+                "title": "Ra đi tìm đường cứu nước: 05/06/1911",
+                "path": "Radi",
+                "description": "Người thanh niên Nguyễn Tất Thành với tên gọi Văn Ba đã rời bến Nhà Rồng (Sài Gòn) trên con tàu buôn Pháp Amiral Latouche-Tréville, bắt đầu hành trình bôn ba suốt 30 năm qua các châu lục: châu Âu, châu Phi, châu Mỹ.",
+                "images": [
+                    "image19.jpg",
+                    "image20.jpg"
+                ]
+            },
+            {
+                "title": "1922: Làm Chủ nhiệm báo “Le Paria”",
+                "path": "BaoLeParia",
+                "description": "Để phục vụ cho hoạt động cách mạng, Bác đã viết báo “Le Paria”. Báo ra mắt vào ngày 1/4/1922 tại Pháp.",
+                "images": [
+                    "image21.jpg",
+                    "image22.jpg"
+                ]
+            },
+            {
+                "title": "Tháng 10/1923: Được bầu vào Hội đồng Quốc tế Nông dân",
+                "path": "HoiDongQuocTeNongDan",
+                "description": "",
+                "images": [
+                    "image24.jpg",
+                    "image25.jpg"
+                ]
+            },
+            {
+                "title": "Tranh vẽ “Nguyễn Ái Quốc giảng bài tại lớp huấn luyện cán bộ cách mạng Việt Nam tại Quảng Châu, Trung Quốc”",
+                "path": "HuanLuyen",
+                "description": "03/02/1930: Tại Cửu Long, Hồng Kông (Trung Quốc), Người chủ trì Hội nghị hợp nhất các tổ chức cộng sản trong nước, chính thức thành lập Đảng Cộng sản Việt Nam, chấm dứt thời kỳ khủng hoảng về đường lối lãnh đạo cách mạng.",
+                "images": [
+                    "image27.jpg",
+                    "image28.jpg"
+                ]
+            },
+            {
+                "title": "Hội nghị Trung ương 8",
+                "path": "HoiNghiTrungUong8",
+                "description": "28/01/1941: Sau 30 năm bôn ba, Bác trở về nước tại cột mốc 108 (Pác Bó, Cao Bằng). Tại đây, Người chủ trì Hội nghị Trung ương 8, thành lập Mặt trận Việt Minh để đoàn kết toàn dân, chuẩn bị lực lượng tiến tới tổng khởi nghĩa.",
+                "images": [
+                    "image29.jpg",
+                    "image30.jpg",
+                    "image31.jpg"
+                ]
+            },
+            {
+                "title": "Tuyên ngôn Độc lập",
+                "path": "DocTuyenNgonDocLap",
+                "description": "02/09/1945: Sau thắng lợi của Cách mạng Tháng Tám, tại Quảng trường Ba Đình, Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập, khai sinh ra nước Việt Nam Dân chủ Cộng hòa — nhà nước công nông đầu tiên ở Đông Nam Á.",
+                "images": [
+                    "image32.jpg",
+                    "image33.jpg"
+                ]
+            },
+            {
+                "title": "Chiến thắng Điện Biên Phủ",
+                "path": "ChienThangDienBienPhu",
+                "description": "1946 – 1969: Người cùng Trung ương Đảng chèo lái con thuyền cách mạng Việt Nam vượt qua muôn vàn khó khăn, lãnh đạo nhân dân làm nên chiến thắng Điện Biên Phủ (1954) chấn động địa cầu, và tiếp tục lãnh đạo cuộc kháng chiến chống Mỹ cứu nước.",
+                "images": [
+                    "image34.jpg",
+                    "image35.jpg",
+                    "image36.jpg",
+                    "image37.jpg",
+                    "image38.jpg",
+                    "image39.jpg",
+                    "image40.jpg",
+                    "image41.jpg",
+                    "image42.jpg"
+                ]
+            },
+            {
+                "title": "Ngày Bác đi xa",
+                "path": "QuaDoi",
+                "description": "Ngày 2 tháng 9 năm 1969, Chủ tịch Hồ Chí Minh qua đời, để lại muôn vàn niềm tiếc thương cho nhân dân Việt Nam và bạn bè quốc tế. Trước lúc đi xa, Người để lại bản Di chúc lịch sử — một văn kiện vô giá kết tinh những tư tưởng cơ bản về Đảng, về dân, về thế hệ trẻ và về phong trào cộng sản quốc tế.",
+                "images": [
+                    "image43.jpg",
+                    "image44.jpg",
+                    "image45.jpg"
+                ]
+            }
+        ]
+    },
+    "SuNghiep": {
+        "title": "Sự Nghiệp",
+        "path": "SuNghiep",
+        "description": "Sự nghiệp của Chủ tịch Hồ Chí Minh không chỉ dừng lại ở việc giải phóng một dân tộc khỏi ách nô lệ. Tư tưởng của Người là sự kết hợp nhuần nhuyễn giữa chủ nghĩa Mác - Lenin với truyền thống văn hóa tốt đẹp của dân tộc và tinh hoa văn hóa nhân loại. Năm 1987, Tổ chức Giáo dục, Khoa học và Văn hóa Liên Hợp Quốc (UNESCO) đã ra nghị quyết tôn vinh Chủ tịch Hồ Chí Minh là “Anh hùng giải phóng dân tộc, Nhà văn hóa kiệt xuất của Việt Nam”",
+        "blocks": [
+            {
+                "title": "",
+                "path": "",
+                "description": "",
+                "images": [
+                    "image46.jpg",
+                    "image47.jpg",
+                    "image48.jpg"
+                ]
+            }
+        ]
+    },
+    "TuyenTruyen": {
+        "title": "Tuyên Truyền",
+        "path": "QRTuyenTruyen",
+        "description": "",
+        "blocks": [
+            {
+                "title": "Quét Mã QR để tìm hiểu thêm thông tin về Bác Hồ",
+                "path": "",
+                "description": "",
+                "images": [
+                    "qr-tuyentruyen.jpg"
+                ]
+            }
+        ]
+    }
+}

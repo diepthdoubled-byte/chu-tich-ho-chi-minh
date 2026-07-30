@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE LIVING ARCHIVE - Không gian 3D Lưu Trụ̂ Lịch Sử</title>
+  
+  <!-- Google Fonts: Cinzel for luxury gold serif headers, Inter for UI body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script type="module" crossorigin src="/chu-tich-ho-chi-minh/assets/index-vg4bIxuM.js"></script>
+  <link rel="stylesheet" crossorigin href="/chu-tich-ho-chi-minh/assets/index-Bz4sCyw6.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Top Header Bar (Matching reference image) -->
+    <header class="archive-header" id="archive-header">
+      <div class="header-inner">
+        <!-- Left: Menu Toggle Button -->
+        <button class="header-btn" id="btn-menu" aria-label="Mở menu điều hướng" title="Danh mục lưu trữ">
+          <svg class="header-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="7" x2="20" y2="7"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="17" x2="20" y2="17"></line>
+          </svg>
+        </button>
+
+        <!-- Center: Title (Wraps on narrow screens like in image) -->
+        <div class="header-title-container">
+          <h1 class="header-title">THE LIVING ARCHIVE</h1>
+        </div>
+
+        <!-- Right: Action Icon Button (Ambiance Audio / Expand detail) -->
+        <button class="header-btn" id="btn-action" aria-label="Bật/Tắt Âm thanh & Chi tiết" title="Âm thanh / Chế độ xem">
+          <svg class="header-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Side Drawer Menu -->
+    <aside class="sidebar-drawer" id="sidebar-drawer">
+      <div class="drawer-overlay" id="drawer-overlay"></div>
+      <div class="drawer-content">
+        <div class="drawer-header">
+          <h2 class="drawer-title">DANH MỤC DI SẢN</h2>
+          <button class="drawer-close" id="btn-close-drawer">&times;</button>
+        </div>
+        <nav class="drawer-nav">
+          <button class="nav-item active" data-filter="all">
+            <span class="nav-icon">🏛️</span>
+            <span>Tất Cả Hiện Vật</span>
+          </button>
+          <button class="nav-item" data-filter="manuscripts">
+            <span class="nav-icon">📜</span>
+            <span>Bản Thảo & Báo Chí</span>
+          </button>
+          <button class="nav-item" data-filter="relics">
+            <span class="nav-icon">👑</span>
+            <span>Di Vật Lịch Sử</span>
+          </button>
+          <button class="nav-item" data-filter="multimedia">
+            <span class="nav-icon">🔮</span>
+            <span>Nguồn Tư Liệu Số</span>
+          </button>
+        </nav>
+        <div class="drawer-footer">
+          <p>Không gian lưu trữ 3D tương tác cao</p>
+          <div class="camera-preset-btns">
+            <button class="preset-btn" id="btn-cam-overview">Góc Nhìn Toàn Cảnh</button>
+            <button class="preset-btn" id="btn-cam-reset">Đặt Lại Camera</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main 3D Space Canvas -->
+    <main class="three-container">
+      <canvas id="three-canvas"></canvas>
+
+      <!-- Mobile Virtual Joystick (Cần gạt di chuyển trên điện thoại) -->
+      <div class="mobile-joystick-container" id="mobile-joystick-container">
+        <div class="joystick-base" id="joystick-base">
+          <div class="joystick-stick" id="joystick-stick"></div>
+          <span class="joystick-label">MOVE</span>
+        </div>
+      </div>
+
+      <!-- Interactive HUD Instructions / Info overlay -->
+      <div class="hud-instructions" id="hud-instructions">
+        <div class="hud-header" id="hud-header">
+          <div class="hud-badge">💡 HƯỚNG DẪN ĐIỀU KHIỂN</div>
+          <button class="hud-toggle-btn" id="btn-toggle-hud" aria-expanded="true" aria-label="Ẩn hoặc hiện hướng dẫn điều khiển" title="Ẩn/Hiện hướng dẫn (Phím H)">
+            <svg class="hud-toggle-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="hud-content" id="hud-content">
+          <p>• <b>Xoay góc nhìn:</b> Giữ <b>Chuột Phải</b> hoặc <b>Vuốt 1 ngón tay</b> trên màn hình</p>
+          <p>• <b>Di chuyển vị trí:</b> Nhấp/Chạm sàn <b>Ground</b> (tốc độ chậm êm ái) hoặc dùng <b>Cần gạt Joystick</b> / Phím <b>WASD</b></p>
+          <p>• <b>Xem hiện vật:</b> Nhấp/Chạm chuột trái vào hiện vật 3D hoặc bức tranh</p>
+          <p class="hud-shortcut-hint">💡 <i>Nhấn phím <b>H</b> để ẩn/hiện bảng này nhanh</i></p>
+        </div>
+      </div>
+
+      <!-- Detail Modal for 3D Relic clicked -->
+      <div class="relic-modal" id="relic-modal">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-card">
+          <button class="modal-close" id="btn-close-modal">&times;</button>
+          <div class="modal-tag" id="modal-tag">DI VẬT LỊCH SỬ</div>
+          <h2 class="modal-title" id="modal-title">Tên Hiện Vật</h2>
+          <div class="modal-body" id="modal-body">
+            Nội dung chi tiết hiện vật...
+          </div>
+          <div class="modal-actions">
+            <button class="btn-primary" id="btn-focus-relic">Tiến Lại Gần</button>
+            <button class="btn-secondary" id="btn-close-modal-2">Đóng</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Art Info Modal (Chi tiết Tác phẩm & Di sản Lịch sử) -->
+      <div class="art-modal" id="art-modal">
+        <div class="art-modal-backdrop" id="art-modal-backdrop"></div>
+        <div class="art-modal-container">
+          <!-- Modal Header with Clean Breadcrumb -->
+          <div class="art-modal-header">
+            <div class="art-tree-breadcrumb" id="art-tree-breadcrumb">
+              <span class="tree-root">🏛️ Di sản Lịch sử</span>
+              <span class="tree-sep">❯</span>
+              <span class="tree-cat" id="art-tree-cat">Quê hương</span>
+              <span class="tree-sep">❯</span>
+              <span class="tree-block" id="art-tree-block">Về quê hương, gia đình và tuổi thơ Bác Hồ</span>
+            </div>
+            <button class="art-modal-close" id="btn-close-art-modal" aria-label="Đóng">&times;</button>
+          </div>
+
+          <!-- Modal Body with 2-Column Layout -->
+          <div class="art-modal-body">
+            <!-- Left Column: Image Preview & Gallery -->
+            <div class="art-media-column">
+              <div class="art-image-wrapper" id="art-image-wrapper" title="Nhấp để xem full màn hình">
+                <img id="art-modal-img" src="" alt="Tác phẩm nghệ thuật" />
+                <button class="art-fullscreen-btn" id="btn-art-fullscreen" aria-label="Xem full màn hình" title="Xem full màn hình">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                  </svg>
+                  <span>Toàn màn hình</span>
+                </button>
+              </div>
+              
+              <!-- Gallery of related images in this section -->
+              <div class="art-gallery-section" id="art-gallery-section">
+                <div class="art-gallery-title">
+                  <span>📷 Thư viện hình ảnh tư liệu</span>
+                  <span class="gallery-count" id="gallery-count">0 ảnh</span>
+                </div>
+                <div class="art-gallery-scroll" id="art-gallery-list">
+                  <!-- Thumbnails populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Detailed Historical Information -->
+            <div class="art-info-column">
+              <!-- Category Card -->
+              <div class="json-node-card node-category">
+                <div class="node-header">
+                  <span class="node-badge cat-badge">DANH MỤC CHỦ ĐỀ</span>
+                </div>
+                <h3 class="node-title" id="art-cat-title">Quê hương</h3>
+                <p class="node-desc" id="art-cat-desc">Mô tả danh mục...</p>
+              </div>
+
+              <!-- Event / Block Card -->
+              <div class="json-node-card node-block">
+                <div class="node-header">
+                  <span class="node-badge block-badge">SỰ KIỆN & TƯ LIỆU LỊCH SỬ</span>
+                </div>
+                <h2 class="node-title" id="art-block-title">Về quê hương, gia đình và tuổi thơ Bác Hồ</h2>
+                <p class="node-desc" id="art-block-desc">Mô tả chi tiết...</p>
+                
+                <!-- Additional Info if available -->
+                <div class="addition-info-box" id="art-addition-box" style="display: none;">
+                  <div class="addition-title">💡 Thông tin mở rộng:</div>
+                  <p class="addition-text" id="art-addition-text"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer Actions -->
+          <div class="art-modal-footer">
+            <button class="btn-primary" id="btn-close-art-modal-2">Đóng cửa sổ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fullscreen Image Lightbox Modal -->
+      <div class="image-lightbox-modal" id="image-lightbox-modal">
+        <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
+        <div class="lightbox-content">
+          <button class="lightbox-close" id="btn-close-lightbox" aria-label="Đóng xem toàn màn hình" title="Đóng (Phím ESC)">&times;</button>
+          <div class="lightbox-image-container">
+            <img id="lightbox-img" src="" alt="Hình ảnh phóng to" />
+          </div>
+          <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>
