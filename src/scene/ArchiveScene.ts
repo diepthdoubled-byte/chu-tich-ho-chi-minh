@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { ArtifactFactory, ArtifactData } from './Artifacts';
+import { getAssetUrl } from '../utils/url';
 
 export type OnArtifactSelectCallback = (artifact: ArtifactData) => void;
 export type OnArtSelectCallback = (artRawPath: string, artObject: THREE.Object3D) => void;
@@ -80,6 +81,18 @@ export class ArchiveScene {
   private playerRadius: number = 0.6;
   private playerEyeHeight: number = 1.6;
 
+  // 3D Model & Texture Loading Manager State
+  private loadingManager: THREE.LoadingManager;
+  private targetLoadingProgress: number = 0;
+  private currentLoadingProgress: number = 0;
+  private isFinishedLoading: boolean = false;
+
+  private loadingScreenEl: HTMLElement | null = null;
+  private loadingBarFillEl: HTMLElement | null = null;
+  private loadingStatusEl: HTMLElement | null = null;
+  private loadingPercentageEl: HTMLElement | null = null;
+  private loadingDetailsEl: HTMLElement | null = null;
+
   constructor(
     container: HTMLElement,
     canvas: HTMLCanvasElement,
@@ -91,6 +104,27 @@ export class ArchiveScene {
     this.onSelectCallback = onSelect;
     this.onArtSelectCallback = onArtSelect;
     this.clock = new THREE.Clock();
+
+    // 0. Setup Loading Manager & DOM Elements
+    this.loadingScreenEl = document.getElementById('loading-screen');
+    this.loadingBarFillEl = document.getElementById('loading-bar-fill');
+    this.loadingStatusEl = document.getElementById('loading-status');
+    this.loadingPercentageEl = document.getElementById('loading-percentage');
+    this.loadingDetailsEl = document.getElementById('loading-details');
+
+    this.loadingManager = new THREE.LoadingManager();
+    this.loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
+      this.handleLoadingProgress(url, itemsLoaded, itemsTotal);
+    };
+    this.loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+      this.handleLoadingProgress(url, itemsLoaded, itemsTotal);
+    };
+    this.loadingManager.onLoad = () => {
+      this.targetLoadingProgress = 100;
+    };
+    this.loadingManager.onError = (url) => {
+      console.warn(`⚠️ Asset load warning/error for: ${url}`);
+    };
 
     // 1. Scene Setup
     this.scene = new THREE.Scene();
@@ -125,11 +159,11 @@ export class ArchiveScene {
     this.initLights();
     this.createGroundCollider();
     // this.createFallbackWallColliders();
-    this.loadHDR('/mainroom.hdr');
-    this.loadEnvironmentModel('/models/env.glb');
-    this.loadMoveIcon('/models/move_icon.glb');
-    this.loadDoorsModel('/models/doors.glb');
-    this.loadArtsHookModel('/models/arts_hook.glb');
+    this.loadHDR(getAssetUrl('/mainroom.hdr'));
+    this.loadEnvironmentModel(getAssetUrl('/models/env.glb'));
+    this.loadMoveIcon(getAssetUrl('/models/move_icon.glb'));
+    this.loadDoorsModel(getAssetUrl('/models/doors.glb'));
+    this.loadArtsHookModel(getAssetUrl('/models/arts_hook.glb'));
 
     // 6. Event Listeners & Touch Controls
     window.addEventListener('resize', this.onResize.bind(this));
@@ -147,6 +181,43 @@ export class ArchiveScene {
 
     // 7. Start Loop
     this.animate();
+  }
+
+  private handleLoadingProgress(url: string, itemsLoaded: number, itemsTotal: number): void {
+    const rawPercent = Math.min(100, Math.round((itemsLoaded / itemsTotal) * 100));
+    if (rawPercent > this.targetLoadingProgress) {
+      this.targetLoadingProgress = rawPercent;
+    }
+
+    const formattedMsg = this.formatAssetLoadingMessage(url);
+    if (this.loadingStatusEl) {
+      this.loadingStatusEl.textContent = formattedMsg;
+    }
+    if (this.loadingDetailsEl) {
+      this.loadingDetailsEl.textContent = `Đang tải: ${itemsLoaded}/${itemsTotal} tài nguyên 3D & kết cấu`;
+    }
+  }
+
+  private formatAssetLoadingMessage(url: string): string {
+    const cleanUrl = url.split('?')[0];
+    const fileName = cleanUrl.split('/').pop() || url;
+
+    if (fileName.endsWith('.hdr')) {
+      return `Đang tải môi trường ánh sáng (${fileName})`;
+    } else if (fileName === 'env.glb') {
+      return `Đang tải kiến trúc 3D không gian chính`;
+    } else if (fileName === 'doors.glb') {
+      return `Đang tải mô hình cửa tương tác 3D`;
+    } else if (fileName === 'move_icon.glb') {
+      return `Đang tải biểu tượng bước chân 3D`;
+    } else if (fileName === 'arts_hook.glb') {
+      return `Đang tải vị trí trưng bày di sản 3D`;
+    } else if (fileName.startsWith('Frame_')) {
+      return `Đang tải mô hình khung tranh 3D (${fileName})`;
+    } else if (/\.(jpg|jpeg|png|webp)$/i.test(fileName)) {
+      return `Đang tải kết cấu tư liệu: ${fileName}`;
+    }
+    return `Đang tải tài nguyên: ${fileName}`;
   }
 
   private initLights(): void {
@@ -216,7 +287,7 @@ export class ArchiveScene {
   }
 
   private loadHDR(url: string): void {
-    const rgbeLoader = new RGBELoader();
+    const rgbeLoader = new RGBELoader(this.loadingManager);
     rgbeLoader.load(
       url,
       (texture) => {
@@ -233,7 +304,7 @@ export class ArchiveScene {
   }
 
   private loadEnvironmentModel(url: string): void {
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(this.loadingManager);
 
     loader.load(
       url,
@@ -286,7 +357,7 @@ export class ArchiveScene {
   }
 
   private loadDoorsModel(url: string): void {
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(this.loadingManager);
 
     loader.load(
       url,
@@ -357,14 +428,14 @@ export class ArchiveScene {
   }
 
   private loadArtsHookModel(url: string): void {
-    const loader = new GLTFLoader();
-    const textureLoader = new THREE.TextureLoader();
+    const loader = new GLTFLoader(this.loadingManager);
+    const textureLoader = new THREE.TextureLoader(this.loadingManager);
 
     // 1. Tải 3 mẫu khung tranh GLB tương ứng với các tỷ lệ
     const framePaths = {
-      horizon: '/models/Frame_Horizon.glb',
-      portal: '/models/Frame_portal.glb',
-      square: '/models/Frame_square.glb',
+      horizon: getAssetUrl('/models/Frame_Horizon.glb'),
+      portal: getAssetUrl('/models/Frame_portal.glb'),
+      square: getAssetUrl('/models/Frame_square.glb'),
     };
 
     const loadFrameTemplate = (key: string, path: string) => {
@@ -426,7 +497,7 @@ export class ArchiveScene {
 
                 if (cleanPath) {
                   textureLoader.load(
-                    cleanPath,
+                    getAssetUrl(cleanPath),
                     (texture) => {
                       texture.colorSpace = THREE.SRGBColorSpace;
 
@@ -551,7 +622,7 @@ export class ArchiveScene {
   }
 
   private loadMoveIcon(url: string): void {
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(this.loadingManager);
 
     loader.load(
       url,
@@ -1194,6 +1265,37 @@ export class ArchiveScene {
 
     const delta = this.clock.getDelta();
     const elapsedTime = this.clock.getElapsedTime();
+
+    // 0. Update Loading Progress Bar & Smooth Fade-Out
+    if (!this.isFinishedLoading) {
+      if (this.currentLoadingProgress < this.targetLoadingProgress) {
+        this.currentLoadingProgress += (this.targetLoadingProgress - this.currentLoadingProgress) * 0.12;
+        if (this.targetLoadingProgress - this.currentLoadingProgress < 0.2) {
+          this.currentLoadingProgress = this.targetLoadingProgress;
+        }
+      }
+
+      const rounded = Math.floor(this.currentLoadingProgress);
+      if (this.loadingBarFillEl) {
+        this.loadingBarFillEl.style.width = `${rounded}%`;
+      }
+      if (this.loadingPercentageEl) {
+        this.loadingPercentageEl.textContent = `${rounded}%`;
+      }
+
+      if (rounded >= 100) {
+        this.isFinishedLoading = true;
+        if (this.loadingStatusEl) {
+          this.loadingStatusEl.textContent = 'Hoàn tất tải không gian 3D!';
+        }
+        if (this.loadingDetailsEl) {
+          this.loadingDetailsEl.textContent = 'Đã sẵn sàng trải nghiệm di sản lịch sử!';
+        }
+        setTimeout(() => {
+          this.loadingScreenEl?.classList.add('fade-out');
+        }, 450);
+      }
+    }
 
     // 1. WASD & Touch Joystick Movement
     this.updatePlayerKeyboardMovement(delta);

@@ -1,3 +1,5 @@
+import { getAssetUrl } from '../utils/url';
+
 export interface ArtBlockInfo {
   path: string;
   title: string;
@@ -54,7 +56,7 @@ export class ArtInfoService {
     }
 
     try {
-      const response = await fetch('/arts/info.json');
+      const response = await fetch(getAssetUrl('/arts/info.json'));
       if (!response.ok) {
         throw new Error(`Failed to fetch info.json: ${response.statusText}`);
       }
@@ -129,14 +131,14 @@ export class ArtInfoService {
     }
 
     if (category && matchedBlock) {
-      // Determine folder path for images
       let folderPath = `/arts/${category.path}`;
       if (matchedBlock.path) {
         folderPath += `/${matchedBlock.path}`;
       }
       folderPath += '/';
 
-      const fullImagePath = folderPath + filename;
+      const fullImagePath = getAssetUrl(folderPath + filename);
+      folderPath = getAssetUrl(folderPath);
 
       return {
         categoryKey: catKey,

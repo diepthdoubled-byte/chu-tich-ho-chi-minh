@@ -1273,5 +1273,212 @@ html, body {
   }
 }
 
+/* ==========================================================================
+   3D Model & Texture Loading Screen Overlay
+   ========================================================================== */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, #171322 0%, #0c0a12 60%, #050407 100%);
+  z-index: 1;
+}
+
+.loading-card {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 480px;
+  padding: 40px 32px;
+  background: rgba(22, 18, 30, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(155, 123, 56, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Emblem Spinner */
+.loading-emblem-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.loading-ring-outer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #D4AF37;
+  border-right-color: rgba(212, 175, 55, 0.3);
+  animation: loadingRingSpin 2s linear infinite;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.loading-ring-inner {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-bottom-color: #F4E8C1;
+  border-left-color: rgba(155, 123, 56, 0.4);
+  animation: loadingRingSpinReverse 1.4s linear infinite;
+}
+
+.loading-icon-center {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+  animation: pulseIcon 2s ease-in-out infinite alternate;
+}
+
+@keyframes loadingRingSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loadingRingSpinReverse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes pulseIcon {
+  0% { transform: scale(0.95); opacity: 0.85; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+
+/* Typography */
+.loading-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #D4AF37;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+}
+
+.loading-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #C5BBAA;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0.9;
+}
+
+/* Progress Bar */
+.loading-bar-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  margin-bottom: 14px;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7E6125 0%, #D4AF37 50%, #F4E8C1 100%);
+  border-radius: 4px;
+  transition: width 0.15s ease-out;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+}
+
+/* Meta Information */
+.loading-meta-info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+}
+
+.loading-status-text {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #E6DFD3;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.loading-percent-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #D4AF37;
+  letter-spacing: 0.05em;
+}
+
+.loading-detail-text {
+  font-size: 0.75rem;
+  color: #9E9485;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .loading-card {
+    padding: 32px 20px;
+  }
+  .loading-title {
+    font-size: 1.15rem;
+    letter-spacing: 0.16em;
+  }
+  .loading-subtitle {
+    font-size: 0.65rem;
+  }
+  .loading-emblem-wrapper {
+    width: 75px;
+    height: 75px;
+    margin-bottom: 20px;
+  }
+  .loading-icon-center {
+    font-size: 1.8rem;
+  }
+}
+
+
 
 

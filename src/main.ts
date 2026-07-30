@@ -2,6 +2,7 @@ import './style.css';
 import { ArchiveScene } from './scene/ArchiveScene';
 import { ArtifactData } from './scene/Artifacts';
 import { ArtInfoService, ArtInfoResult } from './services/ArtInfoService';
+import { getAssetUrl } from './utils/url';
 import * as THREE from 'three';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -254,9 +255,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateActiveImage(fullPath: string) {
-    if (artModalImg) artModalImg.src = fullPath;
+    const resolvedPath = getAssetUrl(fullPath);
+    if (artModalImg) artModalImg.src = resolvedPath;
     if (lightboxImg && imageLightboxModal?.classList.contains('active')) {
-      lightboxImg.src = fullPath;
+      lightboxImg.src = resolvedPath;
     }
   }
 
@@ -268,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (galleryCount) galleryCount.textContent = `${images.length} hình ảnh`;
 
     images.forEach((imgFilename) => {
-      const fullImgPath = `${info.imageFolderPath}${imgFilename}`;
+      const fullImgPath = getAssetUrl(`${info.imageFolderPath}${imgFilename}`);
       const thumb = document.createElement('div');
       thumb.className = `gallery-thumb ${imgFilename === info.currentImage ? 'active' : ''}`;
 
