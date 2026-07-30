@@ -8,6 +8,8 @@ import { getAssetUrl } from '../utils/url';
 export type OnArtifactSelectCallback = (artifact: ArtifactData) => void;
 export type OnArtSelectCallback = (artRawPath: string, artObject: THREE.Object3D) => void;
 
+const RAYCAST_LAYER = 1;
+
 export interface DoorLeaf {
   mesh: THREE.Object3D;
   initialRotationY: number;
@@ -42,6 +44,7 @@ export class ArchiveScene {
 
   private wallMeshes: THREE.Mesh[] = [];
   private groundMeshes: THREE.Mesh[] = [];
+  private raycastTargets: THREE.Object3D[] = [];
 
   private raycaster: THREE.Raycaster;
   private wallRaycaster: THREE.Raycaster;
@@ -157,7 +160,9 @@ export class ArchiveScene {
 
     // 4. Raycasters & Mouse Vector
     this.raycaster = new THREE.Raycaster();
+    this.raycaster.layers.set(RAYCAST_LAYER);
     this.wallRaycaster = new THREE.Raycaster();
+    this.wallRaycaster.layers.set(RAYCAST_LAYER);
     this.mouse = new THREE.Vector2(-999, -999);
 
     // 5. Build World
@@ -246,6 +251,17 @@ export class ArchiveScene {
     this.scene.add(fillLight);
   }
 
+  private registerRaycastTarget(object: THREE.Object3D): void {
+    object.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        child.layers.enable(RAYCAST_LAYER);
+      }
+    });
+    if (!this.raycastTargets.includes(object)) {
+      this.raycastTargets.push(object);
+    }
+  }
+
   private createGroundCollider(): void {
     // Primary ground object plane explicitly named "Ground"
     const groundGeo = new THREE.PlaneGeometry(100, 100);
@@ -256,6 +272,7 @@ export class ArchiveScene {
     groundMesh.position.y = 0;
     this.scene.add(groundMesh);
     this.groundMeshes.push(groundMesh);
+    this.registerRaycastTarget(groundMesh);
   }
 
   private createFallbackWallColliders(): void {
@@ -265,30 +282,32 @@ export class ArchiveScene {
 
     // North Wall (+Z)
     const nWall = new THREE.Mesh(new THREE.PlaneGeometry(roomSize, wallHeight), wallMaterial);
+    nWall.name = 'Env_Wall';
     nWall.position.set(0, wallHeight / 2, roomSize / 2);
     nWall.rotation.y = Math.PI;
-    this.scene.add(nWall);
-    this.wallMeshes.push(nWall);
 
     // South Wall (-Z)
     const sWall = new THREE.Mesh(new THREE.PlaneGeometry(roomSize, wallHeight), wallMaterial);
+    sWall.name = 'Env_Wall';
     sWall.position.set(0, wallHeight / 2, -roomSize / 2);
-    this.scene.add(sWall);
-    this.wallMeshes.push(sWall);
 
     // East Wall (+X)
     const eWall = new THREE.Mesh(new THREE.PlaneGeometry(roomSize, wallHeight), wallMaterial);
+    eWall.name = 'Env_Wall';
     eWall.position.set(roomSize / 2, wallHeight / 2, 0);
     eWall.rotation.y = -Math.PI / 2;
-    this.scene.add(eWall);
-    this.wallMeshes.push(eWall);
 
     // West Wall (-X)
     const wWall = new THREE.Mesh(new THREE.PlaneGeometry(roomSize, wallHeight), wallMaterial);
+    wWall.name = 'Env_Wall';
     wWall.position.set(-roomSize / 2, wallHeight / 2, 0);
     wWall.rotation.y = Math.PI / 2;
-    this.scene.add(wWall);
-    this.wallMeshes.push(wWall);
+
+    [nWall, sWall, eWall, wWall].forEach((w) => {
+      this.scene.add(w);
+      this.wallMeshes.push(w);
+      this.registerRaycastTarget(w);
+    });
   }
 
   private loadHDR(url: string): void {
@@ -352,12 +371,15 @@ export class ArchiveScene {
             if (nameLower.includes('ground') || nameLower.includes('floor')) {
               mesh.name = 'Ground';
               this.groundMeshes.push(mesh);
+            } else {
+              mesh.name = 'Env_Wall';
             }
           }
         });
 
         this.envModel = model;
         this.scene.add(model);
+        this.registerRaycastTarget(model);
         console.log('✅ Loaded env.glb model successfully into scene:', model);
       },
       undefined,
@@ -401,6 +423,7 @@ export class ArchiveScene {
         });
 
         this.scene.add(model);
+        this.registerRaycastTarget(model);
 
         leafMap.forEach((leaves, prefix) => {
           if (!leaves.L || !leaves.R) return;
@@ -600,6 +623,7 @@ export class ArchiveScene {
                         frameInstance.rotation.x = -Math.PI / 2; // Dựng đứng khung tranh vuông góc mặt sàn
                         frameInstance.name = `ArtFrame_${child.name}`;
 
+                        this.registerRaycastTarget(frameInstance);
                         child.add(frameInstance);
                         resolve({ child, frameInstance });
                       },
@@ -617,6 +641,7 @@ export class ArchiveScene {
 
             this.artsHookModel = model;
             this.scene.add(model);
+            this.registerRaycastTarget(model);
 
             // 3. Tự động tính toán khoảng cách giữa các art và điều chỉnh kích thước để tránh chồng lấn
             Promise.all(artLoadPromises).then((results) => {
@@ -870,38 +895,13 @@ export class ArchiveScene {
   }
 
   private getRaycastTargets(): THREE.Object3D[] {
-    const raycastTargets: THREE.Object3D[] = [];
-    this.scene.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh && obj.visible) {
-        if (obj === this.particlesMesh) return;
-        if (this.moveIconModel && (obj === this.moveIconModel || this.isDescendantOf(obj, this.moveIconModel))) {
-          return;
-        }
-
-        const mesh = obj as THREE.Mesh;
-        const mat = mesh.material;
-        const isMatVisible = Array.isArray(mat)
-          ? mat.some((m) => m.visible)
-          : (mat ? mat.visible : true);
-
-        // Skip meshes with invisible materials UNLESS it is the Ground collider
-        const isGround = mesh.name === 'Ground' || mesh.name.toLowerCase().includes('ground');
-        if (!isMatVisible && !isGround) {
-          return;
-        }
-
-        raycastTargets.push(obj);
-      }
-    });
-    return raycastTargets;
+    return this.raycastTargets;
   }
 
   private handleTapAction(): void {
     // Perform raycast on click to log raycast object name
     this.raycaster.setFromCamera(this.mouse, this.camera);
-    const raycastTargets = this.getRaycastTargets();
-
-    const intersects = this.raycaster.intersectObjects(raycastTargets, false);
+    const intersects = this.raycaster.intersectObjects(this.raycastTargets, true);
     if (intersects.length > 0) {
       const hitObj = intersects[0].object;
       console.log(`🎯 [Raycast Click] Object name: "${hitObj.name || '(unnamed)'}" | Parent: "${hitObj.parent?.name || ''}"`, hitObj);
@@ -1108,9 +1108,7 @@ export class ArchiveScene {
   private updateMouseHover(): void {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
-    const raycastTargets = this.getRaycastTargets();
-
-    const intersects = this.raycaster.intersectObjects(raycastTargets, false);
+    const intersects = this.raycaster.intersectObjects(this.raycastTargets, true);
 
     if (intersects.length > 0) {
       const firstHit = intersects[0];
