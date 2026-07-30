@@ -468,6 +468,8 @@ export class ArchiveScene {
 
             const model = gltf.scene;
 
+            const artLoadPromises: Promise<{ child: THREE.Object3D; frameInstance: THREE.Group } | null>[] = [];
+
             model.traverse((child) => {
               const hasPath = child.userData && child.userData.path && typeof child.userData.path === 'string';
               const customUrl: string | undefined =
@@ -496,106 +498,123 @@ export class ArchiveScene {
                 }
 
                 if (cleanPath) {
-                  textureLoader.load(
-                    getAssetUrl(cleanPath),
-                    (texture) => {
-                      texture.colorSpace = THREE.SRGBColorSpace;
+                  const promise = new Promise<{ child: THREE.Object3D; frameInstance: THREE.Group } | null>((resolve) => {
+                    textureLoader.load(
+                      getAssetUrl(cleanPath),
+                      (texture) => {
+                        texture.colorSpace = THREE.SRGBColorSpace;
 
-                      const imgWidth = texture.image.width || 1;
-                      const imgHeight = texture.image.height || 1;
-                      const aspect = imgWidth / imgHeight;
+                        const imgWidth = texture.image.width || 1;
+                        const imgHeight = texture.image.height || 1;
+                        const aspect = imgWidth / imgHeight;
 
-                      // Chọn khung tương ứng tỷ lệ gần nhất: 1.5 (Horizon - 3:2), 2/3 (Portal - 2:3), 1.0 (Square - 1:1)
-                      const diffH = Math.abs(aspect - 1.5);
-                      const diffP = Math.abs(aspect - 2 / 3);
-                      const diffS = Math.abs(aspect - 1.0);
+                        // Chọn khung tương ứng tỷ lệ gần nhất: 1.5 (Horizon - 3:2), 2/3 (Portal - 2:3), 1.0 (Square - 1:1)
+                        const diffH = Math.abs(aspect - 1.5);
+                        const diffP = Math.abs(aspect - 2 / 3);
+                        const diffS = Math.abs(aspect - 1.0);
 
-                      let frameKey: string;
-                      let rawW: number;
-                      let rawH: number;
+                        let frameKey: string;
+                        let rawW: number;
+                        let rawH: number;
 
-                      if (diffH <= diffS && diffH <= diffP) {
-                        frameKey = 'horizon';
-                        rawW = 3.0;
-                        rawH = 2.0;
-                      } else if (diffP <= diffS && diffP <= diffH) {
-                        frameKey = 'portal';
-                        rawW = 2.0;
-                        rawH = 3.0;
-                      } else {
-                        frameKey = 'square';
-                        rawW = 2.0;
-                        rawH = 2.0;
-                      }
+                        if (diffH <= diffS && diffH <= diffP) {
+                          frameKey = 'horizon';
+                          rawW = 3.0;
+                          rawH = 2.0;
+                        } else if (diffP <= diffS && diffP <= diffH) {
+                          frameKey = 'portal';
+                          rawW = 2.0;
+                          rawH = 3.0;
+                        } else {
+                          frameKey = 'square';
+                          rawW = 2.0;
+                          rawH = 2.0;
+                        }
 
-                      const template = this.frameTemplates[frameKey];
-                      if (!template) return;
+                        const template = this.frameTemplates[frameKey];
+                        if (!template) {
+                          resolve(null);
+                          return;
+                        }
 
-                      // Nhân bản khung tranh
-                      const frameInstance = template.clone(true);
+                        // Nhân bản khung tranh
+                        const frameInstance = template.clone(true);
 
-                      // Gán texture cho material 'Art' & userData để nhận diện Raycast click
-                      frameInstance.traverse((node) => {
-                        if ((node as THREE.Mesh).isMesh) {
-                          const mesh = node as THREE.Mesh;
-                          mesh.castShadow = true;
-                          mesh.receiveShadow = true;
+                        // Gán texture cho material 'Art' & userData để nhận diện Raycast click
+                        frameInstance.traverse((node) => {
+                          if ((node as THREE.Mesh).isMesh) {
+                            const mesh = node as THREE.Mesh;
+                            mesh.castShadow = true;
+                            mesh.receiveShadow = true;
 
-                          mesh.userData.isArt = true;
-                          mesh.userData.artRawPath = rawPath;
-                          mesh.userData.artCleanPath = cleanPath;
-                          mesh.userData.parentHook = child;
-                          if (customUrl) {
-                            mesh.userData.url = customUrl;
-                          }
+                            mesh.userData.isArt = true;
+                            mesh.userData.artRawPath = rawPath;
+                            mesh.userData.artCleanPath = cleanPath;
+                            mesh.userData.parentHook = child;
+                            if (customUrl) {
+                              mesh.userData.url = customUrl;
+                            }
 
-                          if (Array.isArray(mesh.material)) {
-                            mesh.material = mesh.material.map((mat) => {
-                              if (mat.name === 'Art' || mat.name.toLowerCase().includes('art')) {
-                                const newMat = (mat as THREE.MeshStandardMaterial).clone();
+                            if (Array.isArray(mesh.material)) {
+                              mesh.material = mesh.material.map((mat) => {
+                                if (mat.name === 'Art' || mat.name.toLowerCase().includes('art')) {
+                                  const newMat = (mat as THREE.MeshStandardMaterial).clone();
+                                  newMat.map = texture;
+                                  newMat.color = new THREE.Color(0xffffff);
+                                  newMat.needsUpdate = true;
+                                  return newMat;
+                                }
+                                return mat;
+                              });
+                            } else if (mesh.material) {
+                              if (mesh.material.name === 'Art' || mesh.material.name.toLowerCase().includes('art')) {
+                                const newMat = (mesh.material as THREE.MeshStandardMaterial).clone();
                                 newMat.map = texture;
                                 newMat.color = new THREE.Color(0xffffff);
                                 newMat.needsUpdate = true;
-                                return newMat;
+                                mesh.material = newMat;
                               }
-                              return mat;
-                            });
-                          } else if (mesh.material) {
-                            if (mesh.material.name === 'Art' || mesh.material.name.toLowerCase().includes('art')) {
-                              const newMat = (mesh.material as THREE.MeshStandardMaterial).clone();
-                              newMat.map = texture;
-                              newMat.color = new THREE.Color(0xffffff);
-                              newMat.needsUpdate = true;
-                              mesh.material = newMat;
                             }
                           }
-                        }
-                      });
+                        });
 
-                      // Scale khung tranh để khớp chuẩn với tỷ lệ bức hình
-                      const targetHeight = 1.2;
-                      const targetWidth = targetHeight * aspect;
-                      const scaleX = targetWidth / rawW;
-                      const scaleY = targetHeight / rawH;
-                      const scaleZ = scaleY;
+                        // Scale khung tranh để khớp chuẩn với tỷ lệ bức hình
+                        const targetHeight = 1.2;
+                        const targetWidth = targetHeight * aspect;
+                        const scaleX = targetWidth / rawW;
+                        const scaleY = targetHeight / rawH;
+                        const scaleZ = scaleY;
 
-                      frameInstance.scale.set(scaleX, scaleY, scaleZ);
-                      frameInstance.rotation.x = -Math.PI / 2; // Dựng đứng khung tranh vuông góc mặt sàn
-                      frameInstance.name = `ArtFrame_${child.name}`;
+                        frameInstance.scale.set(scaleX, scaleY, scaleZ);
+                        frameInstance.rotation.x = -Math.PI / 2; // Dựng đứng khung tranh vuông góc mặt sàn
+                        frameInstance.name = `ArtFrame_${child.name}`;
 
-                      child.add(frameInstance);
-                    },
-                    undefined,
-                    (err) => {
-                      console.error(`❌ Failed to load art texture at ${cleanPath}:`, err);
-                    }
-                  );
+                        child.add(frameInstance);
+                        resolve({ child, frameInstance });
+                      },
+                      undefined,
+                      (err) => {
+                        console.error(`❌ Failed to load art texture at ${cleanPath}:`, err);
+                        resolve(null);
+                      }
+                    );
+                  });
+                  artLoadPromises.push(promise);
                 }
               }
             });
 
             this.artsHookModel = model;
             this.scene.add(model);
+
+            // 3. Tự động tính toán khoảng cách giữa các art và điều chỉnh kích thước để tránh chồng lấn
+            Promise.all(artLoadPromises).then((results) => {
+              const loadedFrames = results.filter(
+                (item): item is { child: THREE.Object3D; frameInstance: THREE.Group } => item !== null
+              );
+              this.adjustArtFrameSizesAndSpacing(loadedFrames);
+            });
+
             console.log('✅ Loaded arts_hook.glb and 3D art frames successfully:', model);
           },
           undefined,
@@ -607,6 +626,106 @@ export class ArchiveScene {
       .catch((err) => {
         console.error('❌ Failed to load frame templates:', err);
       });
+  }
+
+  /**
+   * Tự động tính toán khoảng cách giữa các khung tranh art trong không gian 3D.
+   * Nếu 2 bức tranh đứng gần nhau có nguy cơ chồng lấn hoặc vượt quá khoảng cách tối thiểu (margin),
+   * hệ thống sẽ tự động điều chỉnh tỷ lệ scale của các khung tranh để đảm bảo khoảng cách hiển thị hợp lý.
+   */
+  private adjustArtFrameSizesAndSpacing(
+    loadedFrames: Array<{ child: THREE.Object3D; frameInstance: THREE.Group }>
+  ): void {
+    if (!loadedFrames || loadedFrames.length === 0) return;
+
+    // Cập nhật matrix world để tính toán chính xác vị trí và bounding box trong không gian 3D
+    this.scene.updateMatrixWorld(true);
+
+    interface FrameDataItem {
+      child: THREE.Object3D;
+      frameInstance: THREE.Group;
+      worldPos: THREE.Vector3;
+      size: THREE.Vector3;
+    }
+
+    const items: FrameDataItem[] = loadedFrames.map((lf) => {
+      const worldPos = new THREE.Vector3();
+      lf.frameInstance.getWorldPosition(worldPos);
+
+      const box = new THREE.Box3().setFromObject(lf.frameInstance);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+
+      return {
+        child: lf.child,
+        frameInstance: lf.frameInstance,
+        worldPos,
+        size,
+      };
+    });
+
+    const MIN_GAP = 0.2; // Khoảng cách tối thiểu 20cm giữa 2 viền bức tranh
+    const MIN_SCALE = 0.35; // Giới hạn thu nhỏ tối thiểu (35%) để tranh không bị bé quá
+    const scales = new Array<number>(items.length).fill(1.0);
+
+    // Vòng lặp giải nén (relaxation iterations) để tính toán tỷ lệ scale không chồng lấn
+    const maxPasses = 5;
+    for (let pass = 0; pass < maxPasses; pass++) {
+      let adjustedAny = false;
+
+      for (let i = 0; i < items.length; i++) {
+        for (let j = i + 1; j < items.length; j++) {
+          const itemA = items[i];
+          const itemB = items[j];
+
+          const diff = new THREE.Vector3().subVectors(itemB.worldPos, itemA.worldPos);
+          const dist = diff.length();
+
+          // Chỉ xét các cặp art nằm trong bán kính 6m
+          if (dist < 0.001 || dist > 6.0) continue;
+
+          const dir = diff.clone().normalize();
+
+          // Bán kính/nửa kích thước hình chiếu của tranh dọc theo hướng liên kết
+          const rA = 0.5 * (Math.abs(dir.x) * itemA.size.x + Math.abs(dir.y) * itemA.size.y + Math.abs(dir.z) * itemA.size.z);
+          const rB = 0.5 * (Math.abs(dir.x) * itemB.size.x + Math.abs(dir.y) * itemB.size.y + Math.abs(dir.z) * itemB.size.z);
+
+          const currentSpan = rA * scales[i] + rB * scales[j] + MIN_GAP;
+
+          if (currentSpan > dist) {
+            const maxAllowedSpan = Math.max(0.01, dist - MIN_GAP);
+            const requiredScaleFactor = maxAllowedSpan / (rA * scales[i] + rB * scales[j]);
+
+            if (requiredScaleFactor < 1.0) {
+              const newScaleA = Math.max(MIN_SCALE, scales[i] * requiredScaleFactor);
+              const newScaleB = Math.max(MIN_SCALE, scales[j] * requiredScaleFactor);
+
+              if (newScaleA < scales[i] || newScaleB < scales[j]) {
+                scales[i] = newScaleA;
+                scales[j] = newScaleB;
+                adjustedAny = true;
+              }
+            }
+          }
+        }
+      }
+
+      if (!adjustedAny) break;
+    }
+
+    // Áp dụng tỷ lệ scale đã tính toán vào 3D Mesh
+    items.forEach((item, idx) => {
+      const scaleFactor = scales[idx];
+      if (scaleFactor < 0.999) {
+        item.frameInstance.scale.multiplyScalar(scaleFactor);
+        console.log(
+          `📐 Auto-adjusted art frame size [${item.child.name}] by ${(scaleFactor * 100).toFixed(1)}% to prevent overlap.`
+        );
+      }
+    });
+
+    // Cập nhật lại matrix world sau khi scale
+    this.scene.updateMatrixWorld(true);
   }
 
   public toggleDoor(doorPair: DoorPair): void {
