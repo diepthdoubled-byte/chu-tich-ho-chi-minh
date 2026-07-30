@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { ArtifactFactory, ArtifactData } from './Artifacts';
 import { getAssetUrl } from '../utils/url';
@@ -83,6 +84,7 @@ export class ArchiveScene {
 
   // 3D Model & Texture Loading Manager State
   private loadingManager: THREE.LoadingManager;
+  private dracoLoader: DRACOLoader;
   private targetLoadingProgress: number = 0;
   private currentLoadingProgress: number = 0;
   private isFinishedLoading: boolean = false;
@@ -111,6 +113,9 @@ export class ArchiveScene {
     this.loadingStatusEl = document.getElementById('loading-status');
     this.loadingPercentageEl = document.getElementById('loading-percentage');
     this.loadingDetailsEl = document.getElementById('loading-details');
+
+    this.dracoLoader = new DRACOLoader();
+    this.dracoLoader.setDecoderPath(getAssetUrl('/draco/gltf/'));
 
     this.loadingManager = new THREE.LoadingManager();
     this.loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
@@ -303,8 +308,14 @@ export class ArchiveScene {
     );
   }
 
-  private loadEnvironmentModel(url: string): void {
+  private createGLTFLoader(): GLTFLoader {
     const loader = new GLTFLoader(this.loadingManager);
+    loader.setDRACOLoader(this.dracoLoader);
+    return loader;
+  }
+
+  private loadEnvironmentModel(url: string): void {
+    const loader = this.createGLTFLoader();
 
     loader.load(
       url,
@@ -357,7 +368,7 @@ export class ArchiveScene {
   }
 
   private loadDoorsModel(url: string): void {
-    const loader = new GLTFLoader(this.loadingManager);
+    const loader = this.createGLTFLoader();
 
     loader.load(
       url,
@@ -428,7 +439,7 @@ export class ArchiveScene {
   }
 
   private loadArtsHookModel(url: string): void {
-    const loader = new GLTFLoader(this.loadingManager);
+    const loader = this.createGLTFLoader();
     const textureLoader = new THREE.TextureLoader(this.loadingManager);
 
     // 1. Tải 3 mẫu khung tranh GLB tương ứng với các tỷ lệ
@@ -741,7 +752,7 @@ export class ArchiveScene {
   }
 
   private loadMoveIcon(url: string): void {
-    const loader = new GLTFLoader(this.loadingManager);
+    const loader = this.createGLTFLoader();
 
     loader.load(
       url,
@@ -1472,6 +1483,7 @@ export class ArchiveScene {
     document.removeEventListener('keydown', this.onKeyDown.bind(this));
     document.removeEventListener('keyup', this.onKeyUp.bind(this));
     window.removeEventListener('mouseup', this.onMouseUp.bind(this));
+    this.dracoLoader.dispose();
     this.renderer.dispose();
   }
 }
