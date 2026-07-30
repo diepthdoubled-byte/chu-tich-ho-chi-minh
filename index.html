@@ -3,18 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>THE LIVING ARCHIVE - Không gian 3D Lưu Trụ̂ Lịch Sử</title>
+  <title>CHỦ TỊCH HỒ CHÍ MINH - Không gian 3D Lưu Trụ̂ Lịch Sử</title>
   
   <!-- Google Fonts: Cinzel for luxury gold serif headers, Inter for UI body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <script type="module" crossorigin src="/chu-tich-ho-chi-minh/assets/index-vg4bIxuM.js"></script>
-  <link rel="stylesheet" crossorigin href="/chu-tich-ho-chi-minh/assets/index-Bz4sCyw6.css">
+  <script type="module" crossorigin src="/chu-tich-ho-chi-minh/assets/index-CmudTGsz.js"></script>
+  <link rel="stylesheet" crossorigin href="/chu-tich-ho-chi-minh/assets/index-4_BDTfZ3.css">
 </head>
 <body>
   <div id="app">
+    <!-- Fullscreen Loading Overlay for 3D Models & Textures -->
+    <div class="loading-screen" id="loading-screen">
+      <div class="loading-backdrop"></div>
+      <div class="loading-card">
+        <!-- Glowing animated emblem / spinner -->
+        <div class="loading-emblem-wrapper">
+          <div class="loading-ring-outer"></div>
+          <div class="loading-ring-inner"></div>
+          <div class="loading-icon-center">🏛️</div>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h2 class="loading-title">CHỦ TỊCH HỒ CHÍ MINH</h2>
+        <p class="loading-subtitle">KHÔNG GIAN 3D LƯU TRỮ DI SẢN LỊCH SỬ</p>
+        
+        <!-- Progress Bar Container -->
+        <div class="loading-bar-track">
+          <div class="loading-bar-fill" id="loading-bar-fill"></div>
+          <div class="loading-bar-glow"></div>
+        </div>
+
+        <!-- Percentage & Status line -->
+        <div class="loading-meta-info">
+          <span class="loading-status-text" id="loading-status">Đang chuẩn bị dữ liệu không gian 3D...</span>
+          <span class="loading-percent-text" id="loading-percentage">0%</span>
+        </div>
+
+        <!-- Detailed asset info -->
+        <div class="loading-detail-text" id="loading-details">
+          Đang tải các mô hình 3D và kết cấu tư liệu...
+        </div>
+      </div>
+    </div>
+
     <!-- Top Header Bar (Matching reference image) -->
     <header class="archive-header" id="archive-header">
       <div class="header-inner">
@@ -29,7 +63,7 @@
 
         <!-- Center: Title (Wraps on narrow screens like in image) -->
         <div class="header-title-container">
-          <h1 class="header-title">THE LIVING ARCHIVE</h1>
+          <h1 class="header-title">CHỦ TỊCH HỒ CHÍ MINH</h1>
         </div>
 
         <!-- Right: Action Icon Button (Ambiance Audio / Expand detail) -->
