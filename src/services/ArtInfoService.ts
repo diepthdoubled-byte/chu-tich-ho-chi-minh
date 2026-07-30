@@ -82,8 +82,11 @@ export class ArtInfoService {
     const parts = normPath.split('/');
     const filename = parts.pop() || '';
 
-    // Filter out 'public', 'arts', and empty strings to extract category & block folder names
-    const cleanParts = parts.filter(p => p !== 'public' && p !== 'arts' && p !== '');
+    const base = import.meta.env.BASE_URL || '/';
+    const cleanBaseName = base.replace(/^\/+|\/+$/g, '');
+
+    // Filter out 'public', 'arts', base URL folder name, and empty strings to extract category & block folder names
+    const cleanParts = parts.filter(p => p !== 'public' && p !== 'arts' && p !== '' && p !== cleanBaseName);
 
     let catKey = cleanParts[0] || '';
     let blockPath = cleanParts[1] || '';
