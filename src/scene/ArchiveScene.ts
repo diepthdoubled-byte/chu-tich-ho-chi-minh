@@ -166,7 +166,6 @@ export class ArchiveScene {
     this.mouse = new THREE.Vector2(-999, -999);
 
     // 5. Build World
-    this.initLights();
     this.createGroundCollider();
     // this.createFallbackWallColliders();
     this.loadHDR(getAssetUrl('/mainroom.hdr'));
@@ -230,26 +229,7 @@ export class ArchiveScene {
     return `Đang tải tài nguyên: ${fileName}`;
   }
 
-  private initLights(): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    this.scene.add(ambientLight);
 
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
-    hemiLight.position.set(0, 50, 0);
-    this.scene.add(hemiLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
-    dirLight.position.set(20, 40, 20);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 2048;
-    dirLight.shadow.mapSize.height = 2048;
-    dirLight.shadow.bias = -0.0001;
-    this.scene.add(dirLight);
-
-    const fillLight = new THREE.DirectionalLight(0x88bbff, 1.2);
-    fillLight.position.set(-20, 20, -20);
-    this.scene.add(fillLight);
-  }
 
   private registerRaycastTarget(object: THREE.Object3D): void {
     object.traverse((child) => {
