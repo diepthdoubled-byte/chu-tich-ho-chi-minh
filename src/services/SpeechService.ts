@@ -103,8 +103,23 @@ Di sản văn hóa & Tư tưởng: Chiêm ngưỡng không gian lưu giữ nhữ
     }
   }
 
+  private onMissingVoiceCallback: (() => void) | null = null;
+
+  public setOnMissingVoiceCallback(cb: () => void): void {
+    this.onMissingVoiceCallback = cb;
+  }
+
+  public hasVietnameseVoice(): boolean {
+    return this.getVietnameseVoice() !== null;
+  }
+
   public speak(text: string, force: boolean = false): void {
-    if (!this.synth) return;
+    if (!this.synth) {
+      if (this.onMissingVoiceCallback) {
+        this.onMissingVoiceCallback();
+      }
+      return;
+    }
     if (!this.settings.enabled && !force) return;
 
     this.stop(); // Cancel previous speech utterance and stop audio player
@@ -114,6 +129,13 @@ Di sản văn hóa & Tư tưởng: Chiêm ngưỡng không gian lưu giữ nhữ
 
     // Refresh voice selection dynamically in case voices loaded after init
     const voice = this.selectedVoice || this.getVietnameseVoice();
+
+    if (!voice) {
+      console.warn('⚠️ No specific Vietnamese voice object found in browser.');
+      if (this.onMissingVoiceCallback) {
+        this.onMissingVoiceCallback();
+      }
+    }
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'vi-VN';
@@ -125,7 +147,7 @@ Di sản văn hóa & Tư tưởng: Chiêm ngưỡng không gian lưu giữ nhữ
       utterance.voice = voice;
       console.log(`🎤 Speaking using voice: ${voice.name} (${voice.lang})`);
     } else {
-      console.warn('⚠️ No specific Vietnamese voice object found in browser. Falling back to lang="vi-VN"');
+      console.warn('⚠️ Falling back to lang="vi-VN"');
     }
 
     utterance.onstart = () => {
@@ -134,6 +156,9 @@ Di sản văn hóa & Tư tưởng: Chiêm ngưỡng không gian lưu giữ nhữ
 
     utterance.onerror = (e) => {
       console.warn('⚠️ Speech synthesis error:', e);
+      if (this.onMissingVoiceCallback) {
+        this.onMissingVoiceCallback();
+      }
     };
 
     this.synth.speak(utterance);

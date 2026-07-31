@@ -119,6 +119,11 @@
                 🔊 Phát Lại Lời Chào Mừng
               </button>
             </div>
+            <div class="setting-item button-item">
+              <button class="preset-btn btn-tts-help" id="btn-tts-help">
+                ℹ️ Hướng Dẫn Cài Đặt Giọng Đọc Tiếng Việt
+              </button>
+            </div>
           </div>
         </div>
 
@@ -265,6 +270,63 @@
             <img id="lightbox-img" src="" alt="Hình ảnh phóng to" />
           </div>
           <div class="lightbox-caption" id="lightbox-caption"></div>
+        </div>
+      </div>
+
+      <!-- TTS Vietnamese Voice Installation Guide Modal -->
+      <div class="tts-guide-modal" id="tts-guide-modal">
+        <div class="tts-guide-backdrop" id="tts-guide-backdrop"></div>
+        <div class="tts-guide-card">
+          <button class="tts-guide-close" id="btn-close-tts-guide" aria-label="Đóng">&times;</button>
+          <div class="tts-guide-header">
+            <div class="tts-guide-icon">🔊</div>
+            <div>
+              <h2 class="tts-guide-title">HƯỚNG DẪN CÀI ĐẶT GIỌNG ĐỌC TIẾNG VIỆT</h2>
+              <p class="tts-guide-subtitle">Dành cho tính năng thuyết minh tự động khi xem tư liệu</p>
+            </div>
+          </div>
+          
+          <div class="tts-guide-alert">
+            ⚠️ <b>Thông báo:</b> Trình duyệt/Thiết bị của bạn chưa có sẵn gói giọng đọc Tiếng Việt (TTS). Hãy cài đặt theo hướng dẫn bên dưới để nghe đọc thuyết minh tự động:
+          </div>
+
+          <div class="tts-guide-body">
+            <!-- Windows Section -->
+            <div class="tts-guide-section">
+              <h3 class="tts-guide-sec-title">💻 Trên Máy Tính Windows (10 / 11)</h3>
+              <ol class="tts-guide-steps">
+                <li>Mở <b>Settings</b> (nhấn tổ hợp phím <code>Win + I</code>) ➔ Chọn <b>Time & Language</b> (Thời gian & Ngôn ngữ).</li>
+                <li>Chọn mục <b>Speech</b> (Giọng nói) ➔ Tại phần <i>Manage voices</i>, chọn <b>Add voices</b> (Thêm giọng nói).</li>
+                <li>Tìm kiếm <b>Vietnamese (Tiếng Việt)</b> ➔ Tích chọn và nhấn <b>Add / Install</b> để tải về.</li>
+                <li>Khởi động lại trình duyệt Chrome hoặc Edge để giọng đọc có hiệu lực.</li>
+              </ol>
+            </div>
+
+            <!-- Android Section -->
+            <div class="tts-guide-section">
+              <h3 class="tts-guide-sec-title">📱 Trên Điện Thoại Android</h3>
+              <ol class="tts-guide-steps">
+                <li>Mở <b>Cài đặt (Settings)</b> ➔ Chọn <b>Quản lý chung</b> (hoặc <b>Hệ thống</b>).</li>
+                <li>Chọn <b>Ngôn ngữ & Bàn phím</b> ➔ Chọn <b>Văn bản thành giọng nói (Text-to-speech)</b>.</li>
+                <li>Tại <i>Công cụ ưu tiên (Google Speech Services)</i>, nhấn vào biểu tượng bánh răng ⚙️.</li>
+                <li>Chọn <b>Cài đặt dữ liệu âm thanh (Install voice data)</b> ➔ Chọn <b>Tiếng Việt</b> và tải xuống.</li>
+              </ol>
+            </div>
+
+            <!-- iOS / Mac Section -->
+            <div class="tts-guide-section">
+              <h3 class="tts-guide-sec-title">🍎 Trên iPhone / iPad / Mac</h3>
+              <ol class="tts-guide-steps">
+                <li>Mở <b>Cài đặt (Settings)</b> ➔ Chọn <b>Trợ năng (Accessibility)</b>.</li>
+                <li>Chọn <b>Nội dung được đọc (Spoken Content)</b> ➔ Chọn <b>Giọng nói (Voices)</b>.</li>
+                <li>Chọn <b>Tiếng Việt (Vietnamese)</b> ➔ Chọn giọng đọc (<i>Linh</i> hoặc <i>Hoài My</i>) và bấm biểu tượng mây ☁️ để tải về.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="tts-guide-footer">
+            <button class="btn-primary" id="btn-confirm-tts-guide">Đã Hiểu & Đóng</button>
+          </div>
         </div>
       </div>
     </main>

@@ -111,13 +111,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   // UI Element References - Settings Panel Controls
   const speechToggle = document.getElementById('speech-toggle') as HTMLInputElement;
   const btnReplayWelcome = document.getElementById('btn-replay-welcome');
+  const btnTtsHelp = document.getElementById('btn-tts-help');
+
+  // UI Element References - TTS Guide Modal
+  const ttsGuideModal = document.getElementById('tts-guide-modal');
+  const ttsGuideBackdrop = document.getElementById('tts-guide-backdrop');
+  const btnCloseTtsGuide = document.getElementById('btn-close-tts-guide');
+  const btnConfirmTtsGuide = document.getElementById('btn-confirm-tts-guide');
+
+  function openTtsGuideModal() {
+    ttsGuideModal?.classList.add('active');
+  }
+
+  function closeTtsGuideModal() {
+    ttsGuideModal?.classList.remove('active');
+  }
+
+  btnCloseTtsGuide?.addEventListener('click', closeTtsGuideModal);
+  btnConfirmTtsGuide?.addEventListener('click', closeTtsGuideModal);
+  ttsGuideBackdrop?.addEventListener('click', closeTtsGuideModal);
+  btnTtsHelp?.addEventListener('click', () => {
+    openTtsGuideModal();
+    closeDrawer();
+  });
+
+  speechService.setOnMissingVoiceCallback(() => {
+    openTtsGuideModal();
+  });
 
   if (speechToggle) {
     speechToggle.checked = speechService.isEnabled();
     speechToggle.addEventListener('change', (e) => {
       const isChecked = (e.target as HTMLInputElement).checked;
       speechService.setEnabled(isChecked);
-      showToast(isChecked ? 'Đã bật thuyết trình giọng nói' : 'Đã tắt thuyết trình giọng nói');
+      if (isChecked && !speechService.hasVietnameseVoice()) {
+        openTtsGuideModal();
+      } else {
+        showToast(isChecked ? 'Đã bật thuyết trình giọng nói' : 'Đã tắt thuyết trình giọng nói');
+      }
     });
   }
 
@@ -387,6 +418,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Escape') {
       if (imageLightboxModal?.classList.contains('active')) {
         closeLightbox();
+      } else if (ttsGuideModal?.classList.contains('active')) {
+        closeTtsGuideModal();
       } else {
         closeArtModal();
         closeRelicModal();
