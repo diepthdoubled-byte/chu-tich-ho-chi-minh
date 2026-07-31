@@ -48,15 +48,31 @@
       </div>
     </div>
 
+    <!-- Welcome / Entry Modal for Browser Audio/Speech Security Autoplay Policy -->
+    <div class="welcome-overlay active" id="welcome-overlay">
+      <div class="welcome-backdrop"></div>
+      <div class="welcome-card">
+        <div class="welcome-emblem">🏛️</div>
+        <h2 class="welcome-title">HỒ CHÍ MINH – HÀNH TRÌNH VÀ DI SẢN</h2>
+        <p class="welcome-subtitle">Triển Lãm Virtual 3D Tương Tác</p>
+        <p class="welcome-desc">
+          Chào mừng Quý vị đến với không gian trải nghiệm 3D lưu trữ di sản lịch sử Chủ tịch Hồ Chí Minh.
+          Vui lòng nhấn <b>"Bắt đầu tham quan"</b> để bật thuyết trình giọng đọc tự động.
+        </p>
+        <button class="welcome-start-btn" id="btn-start-experience">
+          <span>🔊 Bắt Đầu Tham Quan</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Top Header Bar (Matching reference image) -->
     <header class="archive-header" id="archive-header">
       <div class="header-inner">
         <!-- Left: Menu Toggle Button -->
-        <button class="header-btn" id="btn-menu" aria-label="Mở menu điều hướng" title="Danh mục lưu trữ">
+        <button class="header-btn" id="btn-menu" aria-label="Mở cài đặt thuyết trình" title="Cài đặt thuyết trình">
           <svg class="header-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" y1="7" x2="20" y2="7"></line>
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <line x1="4" y1="17" x2="20" y2="17"></line>
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
         </button>
 
@@ -66,7 +82,7 @@
         </div>
 
         <!-- Right: Action Icon Button (Ambiance Audio / Expand detail) -->
-        <button class="header-btn" id="btn-action" aria-label="Bật/Tắt Âm thanh & Chi tiết" title="Âm thanh / Chế độ xem">
+        <button class="header-btn" id="btn-action" aria-label="Khôi phục góc nhìn" title="Khôi phục góc nhìn mặc định">
           <svg class="header-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
             <polyline points="15 3 21 3 21 9"></polyline>
@@ -76,32 +92,36 @@
       </div>
     </header>
 
-    <!-- Side Drawer Menu -->
+    <!-- Side Drawer Menu (Settings Panel) -->
     <aside class="sidebar-drawer" id="sidebar-drawer">
       <div class="drawer-overlay" id="drawer-overlay"></div>
       <div class="drawer-content">
         <div class="drawer-header">
-          <h2 class="drawer-title">DANH MỤC DI SẢN</h2>
+          <h2 class="drawer-title">CÀI ĐẶT THUYẾT TRÌNH</h2>
           <button class="drawer-close" id="btn-close-drawer">&times;</button>
         </div>
-        <nav class="drawer-nav">
-          <button class="nav-item active" data-filter="all">
-            <span class="nav-icon">🏛️</span>
-            <span>Tất Cả Hiện Vật</span>
-          </button>
-          <button class="nav-item" data-filter="manuscripts">
-            <span class="nav-icon">📜</span>
-            <span>Bản Thảo & Báo Chí</span>
-          </button>
-          <button class="nav-item" data-filter="relics">
-            <span class="nav-icon">👑</span>
-            <span>Di Vật Lịch Sử</span>
-          </button>
-          <button class="nav-item" data-filter="multimedia">
-            <span class="nav-icon">🔮</span>
-            <span>Nguồn Tư Liệu Số</span>
-          </button>
-        </nav>
+
+        <div class="drawer-settings-panel">
+          <div class="setting-group">
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">🔊 Thuyết Trình Giọng Nói</span>
+                <span class="setting-desc">Tự động đọc bài khi xem hiện vật</span>
+              </div>
+              <label class="switch-toggle">
+                <input type="checkbox" id="speech-toggle" checked />
+                <span class="switch-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item button-item">
+              <button class="preset-btn btn-replay" id="btn-replay-welcome">
+                🔊 Phát Lại Lời Chào Mừng
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="drawer-footer">
           <p>Không gian lưu trữ 3D tương tác cao</p>
           <div class="camera-preset-btns">

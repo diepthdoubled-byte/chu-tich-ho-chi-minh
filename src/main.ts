@@ -2,6 +2,7 @@ import './style.css';
 import { ArchiveScene } from './scene/ArchiveScene';
 import { ArtifactData } from './scene/Artifacts';
 import { ArtInfoService, ArtInfoResult } from './services/ArtInfoService';
+import { SpeechService } from './services/SpeechService';
 import { getAssetUrl } from './utils/url';
 import * as THREE from 'three';
 
@@ -14,9 +15,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Load Art Info Service (info.json)
+  // Load Art Info Service & Speech Service
   const artInfoService = ArtInfoService.getInstance();
   await artInfoService.loadData();
+
+  const speechService = SpeechService.getInstance();
+
+  // Welcome Overlay Gateway (Handles user interaction for browser speech/audio autoplay policy)
+  const welcomeOverlay = document.getElementById('welcome-overlay');
+  const btnStartExperience = document.getElementById('btn-start-experience');
+
+  function startExperience() {
+    welcomeOverlay?.classList.remove('active');
+    speechService.speakWelcome();
+  }
+
+  btnStartExperience?.addEventListener('click', startExperience);
 
   // Active States
   let activeArtifact: ArtifactData | null = null;
@@ -90,10 +104,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   const drawer = document.getElementById('sidebar-drawer');
   const drawerOverlay = document.getElementById('drawer-overlay');
   const btnCloseDrawer = document.getElementById('btn-close-drawer');
-  const filterBtns = document.querySelectorAll('.nav-item');
 
   const btnCamOverview = document.getElementById('btn-cam-overview');
   const btnCamReset = document.getElementById('btn-cam-reset');
+
+  // UI Element References - Settings Panel Controls
+  const speechToggle = document.getElementById('speech-toggle') as HTMLInputElement;
+  const btnReplayWelcome = document.getElementById('btn-replay-welcome');
+
+  if (speechToggle) {
+    speechToggle.checked = speechService.isEnabled();
+    speechToggle.addEventListener('change', (e) => {
+      const isChecked = (e.target as HTMLInputElement).checked;
+      speechService.setEnabled(isChecked);
+      showToast(isChecked ? 'Đã bật thuyết trình giọng nói' : 'Đã tắt thuyết trình giọng nói');
+    });
+  }
+
+  btnReplayWelcome?.addEventListener('click', () => {
+    speechService.speakWelcome();
+    showToast('Đang phát lại lời chào mừng...');
+    closeDrawer();
+  });
 
   // UI Element References - Relic Modal
   const relicModal = document.getElementById('relic-modal');
@@ -147,19 +179,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   btnMenu?.addEventListener('click', openDrawer);
   btnCloseDrawer?.addEventListener('click', closeDrawer);
   drawerOverlay?.addEventListener('click', closeDrawer);
-
-  // Filter Buttons
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      const target = e.currentTarget as HTMLElement;
-      target.classList.add('active');
-
-      const filter = target.getAttribute('data-filter') || 'all';
-      archiveScene.filterArtifacts(filter);
-      closeDrawer();
-    });
-  });
 
   // Camera Presets
   btnCamOverview?.addEventListener('click', () => {
@@ -251,6 +270,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. Render Thumbnail Gallery of all images in this event
     renderGallery(info);
 
+    // 6. Speak historical text narration for artwork
+    let textToSpeak = `${info.blockTitle || info.categoryTitle}. ${info.blockDescription || info.categoryDescription}`;
+    if (info.additionInfo && info.additionInfo.trim() !== '') {
+      textToSpeak += `. ${info.additionInfo}`;
+    }
+    speechService.speak(textToSpeak);
+
     artModal?.classList.add('active');
   }
 
@@ -290,6 +316,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function closeArtModal() {
+    speechService.stop();
     artModal?.classList.remove('active');
     closeLightbox();
     activeArtObject = null;
